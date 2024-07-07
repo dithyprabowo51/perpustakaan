@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV === 'development') {
+  require('dotenv').config()
+}
+
 module.exports = {
   "development": {
     "username": process.env.DB_USERNAME,
