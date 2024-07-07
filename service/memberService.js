@@ -114,6 +114,7 @@ class MemberService {
 
 				// Find borrowed book
 				const findBorrowedBook = await this.bookRepository.readBorrowedBook({ bookId: findBook.id, memberId: findMember.id })
+				if (!findBorrowedBook) throw { code: 400, errors: [`you are not borrow book ${findBook.code}`] }
 
 				// Check for penalty
 				let isPenalty = false

@@ -2,6 +2,7 @@
 const express = require('express')
 const cors = require('cors')
 const { sequelize, Book, Member, MemberPenalty, BorrowedBook } = require('../models')
+const errorHandler = require('../middleware/errorhandler')
 const MonitoringController = require('../controllers/MonitoringController')
 const BookController = require('../controllers/BookControllers')
 const MemberController = require('../controllers/MemberController')
@@ -33,11 +34,12 @@ const newMonitoringController = new MonitoringController({ sequelize })
 const newBookController = new BookController({ bookService: newBookService })
 const newMemberController = new MemberController({ memberService: newMemberService })
 
-// Router
 app.get('/api/health-checks', newMonitoringController.healthCheck())
 app.get('/api/books/existing-books', newBookController.readAllExistingBooks())
 app.get('/api/members', newMemberController.readAllMembers())
 app.post('/api/members/borrow-books', newMemberController.borrowBook())
 app.post('/api/members/return-books', newMemberController.returnBook())
+
+app.use(errorHandler)
 
 module.exports = app
