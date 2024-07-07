@@ -24,7 +24,7 @@ class MemberController {
 		}
 	}
 
-	borrowBooks() {
+	borrowBook() {
 		return async (req, res, next) => {
 			try {
 
@@ -40,6 +40,28 @@ class MemberController {
 					data: borrowBooksResult
 				})
 
+			} catch (err) {
+				next(err)
+			}
+		}
+	}
+
+	returnBook() {
+		return async (req, res, next) => {
+			try {
+				const { bookCode, memberCode } = req.body
+
+				// Return book service
+				const returnBookService = await this.memberService.returnBook({
+					bookCode, memberCode
+				})
+
+				// HTTP Response 200
+				res.status(200).json({
+					code: 200,
+					status: 'OK',
+					data: returnBookService
+				})
 			} catch (err) {
 				console.log(err)
 				next(err)

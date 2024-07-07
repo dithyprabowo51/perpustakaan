@@ -1,7 +1,7 @@
 // Resources
 const express = require('express')
 const cors = require('cors')
-const { sequelize, Book, Member, MemberPenalty } = require('../models')
+const { sequelize, Book, Member, MemberPenalty, BorrowedBook } = require('../models')
 const MonitoringController = require('../controllers/MonitoringController')
 const BookController = require('../controllers/BookControllers')
 const MemberController = require('../controllers/MemberController')
@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
 // Repository Instance
-const newBookRepository = new BookRepository({ Book })
+const newBookRepository = new BookRepository({ Book, BorrowedBook })
 const newMemberRepository = new MemberRepository({ Member, Book, MemberPenalty })
 
 // Service instance
@@ -37,6 +37,7 @@ const newMemberController = new MemberController({ memberService: newMemberServi
 app.get('/api/health-checks', newMonitoringController.healthCheck())
 app.get('/api/books/existing-books', newBookController.readAllExistingBooks())
 app.get('/api/members', newMemberController.readAllMembers())
-app.post('/api/members/borrow-books', newMemberController.borrowBooks())
+app.post('/api/members/borrow-books', newMemberController.borrowBook())
+app.post('/api/members/return-books', newMemberController.returnBook())
 
 module.exports = app

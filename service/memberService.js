@@ -86,9 +86,58 @@ class MemberService {
 				if (isAnyError) throw { code: 400, errors }
 
 				// Update available quantity book
+				await this.bookRepository.updateBook(findBook.id, { available_quantity: Number(findBook.available_quantity) - 1 })
 
+				// Create borrowed books
+				const newBorrowedBooks = await this.bookRepository.addBorrowedBooks({
+					bookId: findBook.id,
+					memberId: findMember.id
+				})
 
-				resolve(findBook)
+				resolve(newBorrowedBooks)
+			} catch (err) {
+				reject(err)
+			}
+		})
+	}
+
+	returnBook({ bookCode, memberCode }) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				const now = new Date().getTime()
+
+				// Find book in database
+				const findBook = await this.bookRepository.findBookByCode(bookCode)
+
+				// Find Member
+				const findMember = await this.memberRepository.findMemberByCode(memberCode)
+
+				// Find borrowed book
+				const findBorrowedBook = await this.bookRepository.readBorrowedBook({ bookId: findBook.id, memberId: findMember.id })
+
+				// Check for penalty
+				let isPenalty = false
+				const borrowedBookTimePlusSevenDay = (Number(findBorrowedBook.created_at)) + (3600 * 1000 * 24 * 7)
+				if (now >= borrowedBookTimePlusSevenDay) {
+					isPenalty = true
+
+					await this.memberRepository.createMemberPenalty(findMember.id)
+				}
+
+				// Deleted borrowed book
+				console.log(findBorrowedBook)
+				await this.bookRepository.deleteBorrowedBook(findBorrowedBook.id)
+
+				// Update available quantity book
+				await this.bookRepository.updateBook(findBook.id, {
+					available_quantity: Number(findBook.available_quantity) + 1
+				})
+
+				resolve({
+					BookId: findBorrowedBook.BookId,
+					MemberId: findBorrowedBook.MemberId,
+					penalty: isPenalty
+				})
 			} catch (err) {
 				reject(err)
 			}

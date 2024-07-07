@@ -75,6 +75,20 @@ class MemberRepository {
 			}
 		})
 	}
+
+	createMemberPenalty(memberId) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				const newMemberPenalty = await this.MemberPenalty.create({
+					MemberId: memberId
+				})
+
+				resolve(newMemberPenalty)
+			} catch (err) {
+				reject(err)
+			}
+		})
+	}
 }
 
 module.exports = MemberRepository
