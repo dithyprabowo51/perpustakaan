@@ -1,0 +1,374 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Perpustakaan API",
+    "description": "This is a perpustakaan API",
+    "contact": {
+      "email": "dithyprabowo51@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://perpus-example.adityo.my.id/api",
+      "description": "Sandbox server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Book",
+      "description": "Book endpoint"
+    },
+    {
+      "name": "Member",
+      "description": "Member endpoint"
+    }
+  ],
+  "paths": {
+    "/api/books/existing-books": {
+      "get": {
+        "tags": [
+          "Book"
+        ],
+        "summary": "Show existing books",
+        "description": "Show all existing books with available quantity. Books that are being borrowed are not counted\n",
+        "operationId": "searchInventory",
+        "responses": {
+          "200": {
+            "description": "Result all existing books",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExistingBooksHttpResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/members": {
+      "get": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Show all members",
+        "description": "Show all members\n",
+        "operationId": "allmembers",
+        "responses": {
+          "200": {
+            "description": "Result all members",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembersHttpResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/members/borrowed-books": {
+      "post": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Borrow book",
+        "description": "Endpoint borrow book\n",
+        "operationId": "memberborrowbook",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BorrowedBookRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success Borrow Book",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BorrowBookHttpResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/members/return-books": {
+      "post": {
+        "tags": [
+          "Member"
+        ],
+        "summary": "Return book",
+        "description": "Endpoint return book\n",
+        "operationId": "memberreturnbook",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BorrowedBookRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success Borrow Book",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReturnBookHttpResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ExistingBooksHttpResponse": {
+        "required": [
+          "code",
+          "data",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExistingBooksData"
+            }
+          }
+        }
+      },
+      "ExistingBooksData": {
+        "required": [
+          "author",
+          "available_quantity",
+          "code",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "SHR-1"
+          },
+          "title": {
+            "type": "string",
+            "example": "A Study in Scarlet"
+          },
+          "author": {
+            "type": "string",
+            "example": "Arthur Conan Doyle"
+          },
+          "available_quantity": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "MembersData": {
+        "required": [
+          "BorrowedBooks",
+          "code",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "M001"
+          },
+          "name": {
+            "type": "string",
+            "example": "Angga"
+          },
+          "BorrowedBooks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BorrowedBooksData"
+            }
+          }
+        }
+      },
+      "BorrowedBooksData": {
+        "required": [
+          "author",
+          "code",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "SHR-1"
+          },
+          "title": {
+            "type": "string",
+            "example": "Harry Potter"
+          },
+          "author": {
+            "type": "string",
+            "example": "J.K Rowling"
+          }
+        }
+      },
+      "PostBorrowBooksData": {
+        "required": [
+          "BookId",
+          "MemberId",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object",
+        "properties": {
+          "BookId": {
+            "type": "integer",
+            "example": 1
+          },
+          "MemberId": {
+            "type": "integer",
+            "example": 1
+          },
+          "created_at": {
+            "type": "integer",
+            "example": 1720339834017
+          },
+          "updated_at": {
+            "type": "integer",
+            "example": 1720339834017
+          }
+        }
+      },
+      "PostReturnBookData": {
+        "required": [
+          "BookId",
+          "MemberId",
+          "penalty"
+        ],
+        "type": "object",
+        "properties": {
+          "BookId": {
+            "type": "integer",
+            "example": 1
+          },
+          "MemberId": {
+            "type": "integer",
+            "example": 1
+          },
+          "penalty": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "BorrowedBookRequestBody": {
+        "required": [
+          "bookCode",
+          "memberCode"
+        ],
+        "type": "object",
+        "properties": {
+          "bookCode": {
+            "type": "string",
+            "example": "SHR-1"
+          },
+          "memberCode": {
+            "type": "string",
+            "example": "M001"
+          }
+        }
+      },
+      "MembersHttpResponse": {
+        "required": [
+          "code",
+          "data",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MembersData"
+            }
+          }
+        }
+      },
+      "BorrowBookHttpResponse": {
+        "required": [
+          "code",
+          "data",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PostBorrowBooksData"
+            }
+          }
+        }
+      },
+      "ReturnBookHttpResponse": {
+        "required": [
+          "code",
+          "data",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PostReturnBookData"
+            }
+          }
+        }
+      }
+    }
+  }
+}
