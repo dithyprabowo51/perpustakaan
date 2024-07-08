@@ -8,12 +8,7 @@
     },
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "https://perpus-example.adityo.my.id/api",
-      "description": "Sandbox server"
-    }
-  ],
+  "servers": [],
   "tags": [
     {
       "name": "Book",
